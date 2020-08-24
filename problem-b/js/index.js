@@ -1,6 +1,7 @@
 'use strict';
 
 //Create a variable `form` that refers to the `<form>` element in the DOM.
+let form = document.querySelector('form');
 
 /* Add an event listener to the `form` element that will listen for `'submit'` 
 type events (which occur when the form is submitted). In the callback function 
@@ -19,6 +20,19 @@ for this event listener, do the following:
      attribute a value of `true` (set the attribute directly with dot notation, 
      don't use `setAttribute()`).
 */
+
+form.addEventListener('submit', function(event){
+  event.preventDefault()
+  if (form.checkValidity()){
+    form.classList.add('d-none');
+    let par = document.querySelector('.alert');
+    par.classList.remove('d-none');
+  } else {
+    form.classList.add('was-validated');
+    let button = document.querySelector('.btn');
+    button.disabled = true;
+  }
+})
 
 
 
@@ -61,6 +75,18 @@ recent; otherwise it should highlight as valid. Note that you'll need to hit
 "Sign me up!" first to enable the validation highlighting!
 */
 
+let input = document.querySelector('#dobInput');
+input.addEventListener('input', function(){
+  let age = getYearsSince(input.value);
+  if(age < 13){
+    input.setCustomValidity("You need to be at least 13 years old.");
+    let feedback = document.querySelector('#dobFeedback');
+    feedback.textContent = "You need to be at least 13 years old.";
+  } else {
+    input.setCustomValidity("");
+  }
+})
+
 
 
 /* Next you'll make sure the two "password" fields match. Start by defining a
@@ -76,13 +102,29 @@ function `validatePasswordMatch()`. This function should access both password
   Also change the `#passwordConfirmFeedback` element so its `textContent` is
   also blank (an empty string).
 */
-
+function validatePasswordMatch(){
+  let pass = document.querySelector('#passwordInput');
+  let passConf = document.querySelector('#passwordConfirmInput');
+  let passConfFeed = document.querySelector('#passwordConfirmFeedback');
+  if(pass.value != passConf.value){
+    passConf.setCustomValidity("Passwords do not match");
+    passConfFeed.textContent = "Passwords do not match";
+  } else {
+    passConf.setCustomValidity("");
+    passConfFeed.textContent = "";
+  }
+}
 
 
 /* Assign the `validatePasswordMatch` function as the callback for `input` 
 events that happen on BOTH the `#passwordInput` and `#passwordConfirmInput`
 elements. You can select the elements individually or using `querySelectorAll()`.
 */
+
+document.querySelector('#passwordConfirmInput').addEventListener('input', validatePasswordMatch);
+document.querySelector('#passwordInput').addEventListener('input', validatePasswordMatch);
+
+
 
 
 
@@ -98,6 +140,22 @@ This should disable the button until all of the fields are valid, but only after
 the user tries to submit once (which is a polite user experience)
 */
 
+let inputs = document.querySelectorAll('#emailInput, #passwordInput, #passwordConfirmInput, #dobInput');
+console.log(inputs);
+
+
+function iterate(item) {
+  item.addEventListener('input', function(){
+    let butt = document.querySelector('button');
+    if(form.classList.contains('was-validated')){
+      butt.disabled = true;
+    } else {
+      butt.disabled = false;
+    }
+  })
+}
+
+inputs.forEach(iterate);
 
 
 
